@@ -1,0 +1,50 @@
+﻿@model WebApplication2.Models.Worker
+
+@{
+    ViewBag.Title = "骑士信息";
+}
+
+<h2>详细信息</h2>
+
+<div>
+    <h4>骑士</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PhoneNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ScheduleTimes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ScheduleTimes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReadyTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReadyTime)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("修改", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("返回骑士列表", "Index")
+</p>

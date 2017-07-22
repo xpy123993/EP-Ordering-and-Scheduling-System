@@ -1,0 +1,51 @@
+﻿@model IEnumerable<WebApplication2.Models.Worker>
+
+@{
+    ViewBag.Title = "骑士列表";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("录入骑士信息", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ScheduleTimes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReadyTime)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PhoneNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ScheduleTimes)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReadyTime)
+        </td>
+        <td>
+            @Html.ActionLink("修改", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("查看", "Details", new { id=item.ID }) |
+            @Html.ActionLink("删除", "Delete", new { id=item.ID })
+        </td>
+    </tr>
+}
+
+</table>

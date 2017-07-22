@@ -1,0 +1,55 @@
+﻿@model IEnumerable<WebApplication2.Models.MenuOrder>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>订单列表</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Username)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrderDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Username)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OrderDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.ActionLink("查看", "Details", new { id = item.ID })
+            @if (User.IsInRole("superadmin") || User.IsInRole("admin"))
+            {
+                @Html.ActionLink("修改 ", "Edit", new { id = item.ID })
+                
+            }
+            @if (User.IsInRole("user") && CommentUtils.CheckOrderCommentPermission(User.Identity.Name, item.ID))
+            {
+                @Html.ActionLink("添加评论", "OrderComment", "Comment", new { id = item.ID }, new { })
+            }
+
+            @if (item.Status.Equals("未分配"))
+            {
+                @Html.ActionLink("撤销该订单", "Delete", new { id = item.ID })
+            }
+
+        </td>
+    </tr>
+}
+
+</table>

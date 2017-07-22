@@ -1,0 +1,49 @@
+﻿@model IEnumerable<WebApplication2.Controllers.CResult>
+
+@{
+    ViewBag.Title = "ResultTable";
+}
+
+<h2>ResultTable</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalLate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalDistance)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalDuration)
+        </th>
+        <th>
+
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalLate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalDistance)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalDuration)
+            </td>
+            <td>
+                @Html.ActionLink("查看", "CalculateResult", new { id = item.ID }) |
+            </td>
+        </tr>
+    }
+
+</table>

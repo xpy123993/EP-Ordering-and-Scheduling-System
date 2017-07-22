@@ -1,0 +1,133 @@
+﻿@model WebApplication2.Controllers.CResult
+@{
+    ViewBag.Title = "CalculateResult";
+}
+
+<h2>路经计算结果</h2>
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+<script src="http://api.map.baidu.com/api?v=2.0&ak=xE6XPAnUbLXpI6vGd79EgfwrmnSaGxsj"></script>
+<script src="RouteQuery" type="text/javascript"></script>
+
+<script>
+
+    var orderlist = new Array();
+
+    var points = new Array();
+    var start_point;
+
+    var map;
+    var routes = new Array();
+
+    function init_map() {
+        start_point = new BMap.Point(121.82333, 39.088169);
+        map = new BMap.Map("allmap");
+        map.centerAndZoom(start_point, 11);
+        map.enableScrollWheelZoom(true);
+    }
+
+    function prepare_data() {
+
+        update_routes();
+        //向服务器发送获得订单请求，用于显示订单细节
+        jQuery.getJSON("GetOrderInfo", function (r_orderlist) {
+
+            init_map();
+
+            orderlist = r_orderlist;
+            points = new Array();
+            for (var i = 0; i < orderlist.length; i++) {
+                points.push(new BMap.Point(orderlist[i].JD, orderlist[i].WD));
+            }
+            
+        });
+        
+    }
+
+    var tag_routes;
+
+    function drawMap(start, end) {
+        var driving = new BMap.DrivingRoute(map, { renderOptions: { map: map, autoViewport: true } });
+        driving.search(start, end);//waypoints表示途经点
+    }
+    //绘制对应骑士编号、调度编号的路径，显示在地图上
+    function loadMap(tag) {
+        tag_routes = routes[tag];
+
+        var waypoints = new Array();
+
+        //drawMap(start_point, points[tag_routes[0]]);
+        waypoints.push(points[tag_routes[0]]);
+        for (var i = 1; i < tag_routes.Length; i++) {
+            //drawMap(points[tag_routes[i - 1]], points[tag_routes[i]]);
+            waypoints.push(points[tag_routes[i]]);
+        }
+
+        //drawMap(points[tag_routes[tag_routes.length - 1]], start_point);
+
+        var driving = new BMap.DrivingRoute(map, { renderOptions: { map: map, autoViewport: true } });
+        driving.search(start_point, start_point, { waypoints: waypoints });//waypoints表示途经点
+       
+    }
+
+    function refresh_map() {
+
+        init_map();
+
+        $('[name=view]:checkbox').each(function () {
+            if ($(this).is(":checked")) {
+                loadMap($(this).prop("id").substr(6));
+            }
+        });
+
+    }
+
+    $(document).ready(function () {
+        prepare_data();
+    });
+
+
+</script>
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-3 column">
+            <div class="list-group"  style="height:800px; overflow-y:scroll">
+
+                <div class="list-group-item active" >
+                    摘要: 
+                    <div>
+                        <small>
+                            总路程: @(((int)(Model.TotalDistance / 1000)) + "公里") |
+                            总时长: @(((int)(Model.TotalDuration / 60)) + "分钟") <br />
+                            总拖延时间: @(((int)(Model.TotalLate / 60)) + "分钟") 
+                        </small>
+                    </div>
+                </div>
+
+                @foreach (WebApplication2.Controllers.CItem Item in Model.Items)
+                {
+                    <div class="list-group-item">
+                        @Item.Name 
+                        <div>
+                            <small>
+                                @Item.ScheduleTime <br />
+                                路程: @(((int)(double.Parse(Item.Distance) / 1000)) + "公里") |
+                                时长: @(((int)(double.Parse(Item.Duration) / 60)) + "分钟") <br />
+                                拖延时间: @(((int)(double.Parse(Item.TotalLate) / 60)) + "分钟") 
+                                <input id="check_@Item.TAG" name="view" type="checkbox" />显示在地图上
+                                <script>
+                                    $("#check_@Item.TAG").click(refresh_map);
+                                </script>
+                            </small>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+        <div class="col-md-9 column">
+            <div id="allmap" style="width:800px; height:800px"></div>
+        </div>
+    </div>
+</div>

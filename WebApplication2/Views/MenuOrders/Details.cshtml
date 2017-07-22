@@ -1,0 +1,73 @@
+﻿@model WebApplication2.Models.OrderModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>查看</h2>
+
+<div>
+    <h4>订单信息</h4>
+
+    
+
+    <dl class="dl-horizontal">
+        <dt>用户名</dt>
+        <dd>@Html.DisplayFor(model => model.menuOrder.Username)</dd>
+
+        <dt>订单时间</dt>
+        <dd>@Html.DisplayFor(model => model.menuOrder.OrderDate)</dd>
+
+        <dt>当前状态</dt>
+        <dd>@Html.DisplayFor(model => model.menuOrder.Status)</dd>
+
+        <dt>配送地址</dt>
+        <dd>@Html.DisplayFor(model => model.menuOrder.Address)</dd>
+
+        <dt>备注</dt>
+        <dd>@Html.DisplayFor(model => model.menuOrder.Text)</dd>
+
+        <dt>总计</dt>
+        <dd>@Html.DisplayFor(model => model.cost)</dd>
+    </dl>
+    <br />
+    <table class="table">
+        <tr>
+            <th>
+                商品名称
+            </th>
+            <th>
+                商品描述
+            </th>
+            <th>
+                单价
+            </th>
+            <th>
+                购买数量
+            </th>
+        </tr>
+        @foreach (WebApplication2.Models.OrderItem orderItem in Model.orderItems)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => orderItem.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => orderItem.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => orderItem.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => orderItem.ItemNumber)
+                </td>
+            </tr>
+        }
+    </table>
+    <dl class="dl-horizontal">
+        
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("返回列表", "Index")
+</p>

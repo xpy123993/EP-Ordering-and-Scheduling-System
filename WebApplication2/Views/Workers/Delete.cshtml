@@ -1,0 +1,56 @@
+﻿@model WebApplication2.Models.Worker
+
+@{
+    ViewBag.Title = "移除";
+}
+
+<h2>移除骑士信息</h2>
+
+<h3>您确定要移除该骑士吗?</h3>
+<div>
+    <h4>骑士信息</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PhoneNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ScheduleTimes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ScheduleTimes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReadyTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReadyTime)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="移除" class="btn btn-default" /> |
+            @Html.ActionLink("返回骑士列表", "Index")
+        </div>
+    }
+</div>

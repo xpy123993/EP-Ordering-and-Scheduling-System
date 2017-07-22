@@ -1,0 +1,52 @@
+﻿@model WebApplication2.Models.UserCommentModel
+@{
+    ViewBag.Title = "OrderComment";
+}
+
+<div>
+    <h4>添加评论</h4>
+
+
+
+    <dl class="dl-horizontal">
+        <dt>用户名</dt>
+        <dd>@Html.DisplayFor(model => model.menuOrder.Username)</dd>
+
+        <dt>订单时间</dt>
+        <dd>@Html.DisplayFor(model => model.menuOrder.OrderDate)</dd>
+    </dl>
+    <br />
+    @using (@Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <table class="table">
+            <tr>
+                <th>
+                    商品名称
+                </th>
+                <th>
+                    评价
+                </th>
+            </tr>
+            @foreach (WebApplication2.Models.MenuComment menuComment in Model.menuComments)
+            {
+                <tr>
+                    <td>
+                        @menuComment.MenuItem
+                    </td>
+                    <td>
+                        <label><input type="radio" name="rating-@menuComment.ItemID" value="good" />赞一下</label>
+                        <label><input type="radio" name="rating-@menuComment.ItemID" value="bad" />踩一下</label>
+
+                        <textarea name="input-@menuComment.ItemID" style="min-width: 100%" rows="10"></textarea><br />
+                    </td>
+                </tr>
+            }
+        </table>
+        <input type="submit" class="btn btn-success" value="保存评论"/>
+    }
+    <dl class="dl-horizontal"></dl>
+</div>
+<p>
+    @Html.ActionLink("返回主页", "Index", "Home")
+</p>

@@ -1,0 +1,59 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<style>
+    .carousel-inner img {
+        width: 100%;
+    }
+</style>
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+
+<div id="myCarousel" class="carousel slide">
+    <!-- 轮播（Carousel）指标 -->
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <!-- 轮播（Carousel）项目 -->
+    <div class="carousel-inner">
+        <div class="item active">
+            <img src="~/Resource/slide1.png" alt="First slide">
+            <div class="carousel-caption" style="background-color:rgba(0, 0, 0, 0.7); ">
+                <div class="hero-unit" style="text-align:left;">
+                    <h4>&nbsp;&nbsp;麻婆豆腐</h4>
+                    <p>&nbsp;&nbsp;&nbsp;麻婆豆腐广受欢迎，流传各地，做法也有许多不同。最大的改变之一，是“陈兴盛饭铺”自己所调整，亦即将材料的牛肉改为猪肉，以便不吃牛肉的食客也能品尝。该店后来又改回用牛肉，但以猪肉为料的作法也已广为各地厨师和食客接受；其次则是增加了豆瓣酱。</p>
+                    &nbsp;&nbsp;@Html.ActionLink("立即订餐", "Create", "Order")
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <img src="~/Resource/slide2.png" alt="Second slide" style="align-content:center">
+            <div class="carousel-caption" style="background-color:rgba(0, 0, 0, 0.75); text-align:left">
+                <div class="hero-unit">
+                    <h4>&nbsp;&nbsp;蚝油鸭掌</h4>
+                    <p>&nbsp;&nbsp;&nbsp;蚝油鸭掌是广东省的地方传统名菜，属于粤菜系。此菜味脆而鲜，作小吃最好。单从做法来看,可以看出南方人对鸡的偏爱。比如各大食肆有“鲍汁鸡脚”,但鲜有“鲍汁鸭脚”。</p>
+                    &nbsp;&nbsp;@Html.ActionLink("立即订餐", "Create", "Order")
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <img src="~/Resource/slide3.png" alt="Third slide">
+            <div class="carousel-caption" style="background-color:rgba(0, 0, 0, 0.75); text-align:left">
+                <div class="hero-unit">
+                    <h4>&nbsp;&nbsp;红烧包鸡翅</h4>
+                    <p>&nbsp;&nbsp;&nbsp;此菜品为以鸡翅为主要食材的家常菜，味道咸鲜，美味可口。</p>
+                    &nbsp;&nbsp;@Html.ActionLink("立即订餐", "Create", "Order")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(".classname img").addClass("carousel-inner img-responsive img-rounded");
+</script>
+
+
+

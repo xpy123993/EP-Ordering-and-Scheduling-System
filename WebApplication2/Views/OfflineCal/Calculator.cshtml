@@ -1,0 +1,386 @@
+﻿@model WebApplication2.Models.OfflineProblem
+@{
+    ViewBag.Title = "路经计算";
+}
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<script src="~/Scripts/jquery.dragsort-0.5.2.min.js"></script>
+
+<script src="http://api.map.baidu.com/api?v=2.0&ak=xE6XPAnUbLXpI6vGd79EgfwrmnSaGxsj"></script>
+
+<style>
+    table.fixed {
+        table-layout: fixed;
+    }
+
+        table.fixed td {
+            overflow-y: hidden;
+        }
+</style>
+<div id="allmap"></div>
+<script type="text/javascript">
+
+    var distances = new Array();
+    var durations = new Array();
+
+    var start_times = new Array();
+    var points = new Array();
+    var addresses = new Array();
+
+    var mapper_ids = new Array();
+
+    var map;
+
+    function register_drag() {
+        
+        
+    }
+    //请求订单数据，这里用的是随机生成伪地址订单的方法，毕竟没办法得到真实数据
+    function update_view() {
+        jQuery.getJSON("TestQuery", function (str) {
+            $("#orderlist").empty();
+
+            var start = "<li class=\"list-group-item\">";
+            var end = "</li>"
+
+            points = new Array();
+            start_times = new Array();
+            addresses = new Array();
+
+            $.each(str, function (i, item) {
+
+                var ms = parseInt(item.OrderDate.replace(/\D/igm, ""));
+
+                points.push(new BMap.Point(item.JD, item.WD));
+                start_times.push(ms);
+                addresses.push(item.Address);
+                mapper_ids.push(item.ID);
+
+                $("#orderlist").append(start + "<div id = \"ORDER" + i + "\">" + "订单-" + i.toString() + "<div id = \"O" + i + "\">"
+                    + "<small> 送货地址：" + item.Address + "</small>"
+                    + "<br /><small> 订单时间：" + new Date(ms).toLocaleTimeString() + "</small>"
+                    + "</div></div>" + end);
+            });
+
+            points.push(new BMap.Point(121.82333, 39.088169));
+
+            for (var i = 0; i < points.length; i++) {
+                for (var j = 0; j < i; j++) {
+                    search_route(points[i], points[j], i, j);
+                }
+            }
+
+        });
+    }
+
+
+    // 计算两个点之间的路径长度和预计时间，请求不会直接返回，这是一个异步操作，searchComplete定义了得到数据后该如何做
+    function search_route(start_point, end_point, i, j) {
+        var searchComplete = function (results) {
+            if (transit.getStatus() != BMAP_STATUS_SUCCESS) {
+                return;
+            }
+            var plan = results.getPlan(0);
+            distances[i + "_" + j] = plan.getDistance(false);//m    获得任意两个点的距离
+            durations[i + "_" + j] = plan.getDuration(false);//s
+            distances[j + "_" + i] = plan.getDistance(false);//m
+            durations[j + "_" + i] = plan.getDuration(false);//s
+            //console.log("返回结果", "距离:" + distances[i + "_" + j] + "," + "时长:" + durations[i + "_" + j]);
+        }
+        var transit = new BMap.DrivingRoute(map, {
+            renderOptions: { map: map },
+            onSearchComplete: searchComplete,
+            onPolylinesSet: function () {
+                setTimeout(function () { }, "1000");
+            }
+        });
+        transit.search(start_point, end_point);
+    }
+
+    $(document).ready(function () {
+        update_view();
+        map = new BMap.Map("allmap");
+    });
+
+</script>
+
+<div class="container">
+    <div class="row clearfix">
+        <br />
+        <div class="col-md-3 column" >
+            <ul class="dragsort list-group" id="orderlist" style="height:800px; overflow-y:scroll">
+
+            </ul>
+        </div>
+        <div class="col-md-9 column">
+            <div>
+                <table class="table fixed" id="table">
+                    @for (int i = 0; i < Model.WorkerNum; i++)
+                    {
+                        <colgroup width="200px" />
+                    }
+                    <thead>
+                        
+                        <tr>
+                            @for (int i = 0; i < Model.WorkerNum; i++)
+                            {
+                                <th>
+                                    骑士-@(i + 1)
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ 
+                            string text = "#orderlist, ";
+                        }
+
+                        @for (int i = 0; i < Model.ScheduleMaxTime; i++)
+                        {
+                            <tr height="100px">
+                                @for (int j = 0; j < Model.WorkerNum; j++)
+                                {
+                                    <td>
+                                        <div class="text-info" id="T@(i)_@(j)">日程表</div>
+                                        <div id="S@(i)_@(j)" class="dragsort" style="min-width:100%; min-height:100%">
+                                            
+                                        </div>
+                                    </td>
+                                    {
+                                        text += ",S" + i + "_" + j;
+
+                                    }
+                                }
+                            </tr>
+
+
+                        }
+                    </tbody>
+                </table>
+                <div id="status_text"></div><br />
+                @using (Html.BeginForm())
+                {
+                    <div class="form-group">
+                        <input type="hidden" value="" id="ScheduleDetails" name="ScheduleDetails"/>
+                        <input type="hidden" value="" id="ScheduleDurations" name="ScheduleDurations">
+                        <input type="hidden" value="" id="ScheduleDistances" name="ScheduleDistances">
+                        <input type="hidden" value="" id="ScheduleTotalLates" name="ScheduleTotalLates"/>
+                        <input type="hidden" value="" id="ScheduleTimes" name="ScheduleTimes">
+                        <input type="submit" class="btn btn-default"/>
+                    </div>
+                }
+
+                <script>
+                    //注册能够拖动的组件
+                    $(".dragsort").dragsort({
+                        dragSelector: "div",
+                        dragBetween: true,
+                        dragEnd: saveOrder,
+                        placeHolderTemplate: "<li class='placeHolder'><div></div></li>",
+                        scrollSpeed: 5
+                    });
+
+                    var schedule_start_times = new Array();
+                    var schedule_end_times = new Array();
+
+                    //当用户拖动结束的事件响应函数
+                    function saveOrder() {
+                        var i_size = @Model.ScheduleMaxTime;
+                        var j_size = @Model.WorkerNum;
+
+                        var result_str = "";
+
+                        var result_durations = "";
+                        var result_distances = "";
+                        var result_totallates = "";
+                        var result_times = "";
+
+                        var arr = new Array();
+
+                        var isValid = true;
+                        var isWarning = false;
+
+                        schedule_start_times = new Array();
+                        schedule_end_times = new Array();
+
+                        for (var i = 0; i < i_size; i++) {
+                            for (var j = 0; j < j_size; j++) {
+                                var label = "#S" + i + "_" + j + " li";
+                                var temp = $(label).map(function () {
+                                    return $(this).children().prop("id").substr(5);
+                                }).get();
+
+                                var duration = 0;
+                                var distance = 0;
+                                var total_late = 0;
+                                var tempValue = 0;
+                                var time = "";
+
+                                if (temp.length > 0) {
+
+                                    //计算骑士从饭店到第一单地点的时间/路程消耗
+                                    //第一单不存在拖延问题
+
+                                    var date_start = new Date(start_times[temp[0]]);
+                                    var date_end = new Date(start_times[temp[0]]);
+                                    date_start.setSeconds(date_start.getSeconds() - durations[(points.length - 1) + "_" + temp[0]]);
+
+                                    $("#O" + temp[0]).html("<small>" + date_start.toLocaleTimeString() + "-" + date_end.toLocaleTimeString() + "</small>");
+
+                                    duration += durations[(points.length - 1) + "_" + temp[0]];
+                                    distance += distances[(points.length - 1) + "_" + temp[0]];
+                                }
+
+                                var total_second = 0;
+                                //计算骑士的送餐路径
+                                for (var k = 1; k < temp.length; k++) {
+
+                                    var date_start = new Date(start_times[temp[0]]);
+                                    var date_end = new Date(start_times[temp[0]]);
+
+                                    date_start.setSeconds(date_start.getSeconds() + total_second);
+                                    total_second += durations[temp[k - 1] + "_" + temp[k]];
+
+                                    date_end.setSeconds(date_end.getSeconds() + total_second);
+                                    if (date_end < new Date(start_times[temp[k]]))
+                                    {
+                                        //判断是否需要等待
+                                        total_second += (new Date(start_times[temp[k]]).getTime() - date_end.getTime()) / 1000.0;
+                                        date_end = new Date(start_times[temp[k]]);
+                                        isWarning = true;
+                                    }
+
+                                    $("#O" + temp[k]).html("<small>" + date_start.toLocaleTimeString() + "-" + date_end.toLocaleTimeString() + "</small>")
+
+                                    if (date_end >= new Date(start_times[temp[k]])) {
+                                        tempValue = (date_end.getTime() - new Date(start_times[temp[k]]).getTime()) / 1000 - (@Model.DueDate) * 60;
+                                        if (tempValue > 0) {
+                                            total_late += tempValue;
+                                        }
+                                    }
+                                        
+
+
+                                    distance += distances[temp[k - 1] + "_" + temp[k]];
+
+                                }
+
+                                if (temp.length > 0)
+                                {
+                                    //计算骑士从最后一单送餐地点归来的时间/路程消耗
+                                    //不存在返回饭店的拖延时间
+                                    total_second += durations[(points.length - 1) + "_" + temp[temp.length - 1]];
+                                    distance += distances[(points.length - 1) + "_" + temp[temp.length - 1]];
+                                }
+
+
+                                duration += total_second;
+
+                                if (temp.length > 0) {
+
+                                    var start_datetime = new Date(start_times[temp[0]]);
+                                    start_datetime.setSeconds(start_datetime.getSeconds() - durations[(points.length - 1) + "_" + temp[0]]);
+
+                                    var end_datetime = new Date(start_times[temp[0]]);
+                                    end_datetime.setSeconds(end_datetime.getSeconds() + total_second);
+
+                                    schedule_start_times[i + "_" + j] = (start_datetime);
+                                    schedule_end_times[i + "_" + j] = (end_datetime);
+
+                                    //alert("日程表 <small>" + start_datetime.toLocaleTimeString() + "-" + end_datetime.toLocaleTimeString() + "</small>");
+                                    //更新调度表表头
+                                    var build_str = 
+
+                                        $("#T" + i + "_" + j).html("日程表  "
+                                            + "<small class=\"text-"
+                                            + ((total_second + durations[(points.length - 1) + "_" + temp[0]]) / 60 > 50 ? "danger" : "success") + "\">"
+                                            + start_datetime.toLocaleTimeString() + "-" + end_datetime.toLocaleTimeString()
+                                            + "</small>");
+                                    time = start_datetime.toLocaleTimeString() + "-" + end_datetime.toLocaleTimeString();
+                                }
+                                else
+                                    $("#T" + i + "_" + j).html("日程表");
+
+                                result_distances += distance + ",";
+                                result_durations += duration + ",";
+                                result_times += time + ",";
+                                result_totallates += total_late + ",";
+                                result_str += temp + ":";
+                            }
+                        }
+
+                        
+                        
+
+                        for (var j = 0; j < j_size; j++) {
+                            for (var i = 0; i < i_size; i++) {
+                                for (var k = 0; k < i_size; k++) {
+                                    if (i != k) {
+                                        
+                                        var cur_start = schedule_start_times[i + "_" + j];
+                                        var cur_end = schedule_end_times[i + "_" + j];
+
+                                        var check_start = schedule_start_times[k + "_" + j];
+                                        var check_end = schedule_end_times[k + "_" + j];
+
+                                        if (typeof (cur_start) != "undefined" && typeof (check_start) != "undefined") {
+                                            if (check_start < cur_start && cur_start < check_end)
+                                                isValid = false;
+                                            if (check_start < cur_end && cur_end < check_end)
+                                                isValid = false;
+                                        }
+                                            
+                                    }
+                                }
+                            }
+                        }
+
+                        
+                        
+                        var orderlist = $("#orderlist li").map(function () {
+                            return $(this).children().prop("id").substr(5);
+                        }).get();
+
+                        for (var i = 0; i < orderlist.length; i++) {
+                            var order_id = orderlist[i];
+                            $("#O" + order_id).html("<small> 送货地址：" + addresses[order_id] + "</small>"
+                                + "<br /><small> 订单时间：" + new Date(start_times[order_id]).toLocaleTimeString() + "</small>");
+                        }
+
+                        if (!isValid) {
+                            $("#status_text").html("<div class=\"text-danger\">每个骑士的调度时间段不能重叠</div>")
+                        }
+                        else {
+                            $("#status_text").html("<div class=\"text-success\">输入合法</div>");
+
+                            $("#ScheduleDetails").val(result_str);
+                            $("#ScheduleDurations").val(result_durations);
+                            $("#ScheduleDistances").val(result_distances);
+                            $("#ScheduleTimes").val(result_times);
+                            $("#ScheduleTotalLates").val(result_totallates);
+                        }
+                        if (isWarning) {
+                            $("#status_text").html($("#status_text").html() + "<div class=\"text-warning\">调度过程存在订单等待</div>");
+                        }
+
+                        return isValid;
+                    }
+                    //动态加载百度地图API
+                    function loadJScript() {
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.src = "http://api.map.baidu.com/api?v=2.0&ak=xE6XPAnUbLXpI6vGd79EgfwrmnSaGxsj";
+                        document.body.appendChild(script);
+                    }
+                    $(document).ready(function () {
+                        loadJScript();
+                    });
+                </script>
+            </div>
+            
+        </div>
+    </div>
+</div>

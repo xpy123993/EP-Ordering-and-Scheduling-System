@@ -1,0 +1,133 @@
+﻿@model Dictionary<string, List<WebApplication2.Models.OrderItem>>
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>餐饮列表</h2>
+<br />
+
+<style>
+    #menuList {
+        position: absolute;
+        overflow: auto;
+        top:auto;
+    }
+</style>
+
+ 
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    $(window).scroll(function () {
+        var menuYloc = 10;
+        var offsetTop = menuYloc + $(window).scrollTop() + "px";
+        $("#menuList").animate({ top: offsetTop }, { duration: 600, queue: false });
+    });  
+    function scrollToPosition(type) {
+        $('html, body').animate({
+            scrollTop: $("#table-" + type).offset().top
+        }, 200);  
+    }
+</script>
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-2 column">
+            <div class="list-group" id="menuList" style="width: 80%">
+                <a href="#" class="list-group-item active" >菜单</a>
+                @foreach (string key in Model.Keys)
+                {
+
+                    <a class="list-group-item" href="javascript:scrollToPosition('@key');">
+                        <span class="badge">@Model[key].Count</span>
+                        @key
+                    </a>
+                }
+
+            </div>
+        </div>
+        <div class="col-md-10 column" style="overflow-y:auto">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    @foreach (string key in Model.Keys)
+                    {
+                        <table class="table" id="table-@key" name="table-@key">
+                            <tr>
+                                <th width="3%">
+                                    
+                                </th>
+                                <th width="10%">
+
+                                </th>
+                                <th width="35%">
+                                    商品名称
+                                </th>
+                                <th width="10%">
+                                    商品类别
+                                </th>
+                                <th width="10%">
+                                    单价
+                                </th>
+
+                                <th width="20%">
+                                    购买数量
+                                </th>
+                            </tr>
+
+                            @foreach (var item in Model[key])
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td valign="middle">
+                                        <img src="../Image?path=@item.ImagePath" width="100" alt="" />  
+                                        
+                                    </td>
+                                    <td valign="middle">
+                                        <h4>@Html.DisplayFor(modelItem => item.Name)</h4>
+                                        <font color="gray" size="2">月售 @Html.DisplayFor(modelItem => item.SellNumber) &nbsp; &nbsp; 赞 @Html.DisplayFor(modelItem => item.Rating)</font><br />
+                                        @Html.DisplayFor(modelItem => item.Description) <br />
+                                        @Html.ActionLink("查看评论", "Details", "Comment", new { id = @item.ItemID }, new { })
+                                    </td>
+                                    <td valign="middle">
+                                        <br />
+                                        @Html.DisplayFor(modelItem => item.Type)
+                                    </td>
+                                    <td valign="middle">
+                                        <br />
+                                        @Html.DisplayFor(modelItem => item.Price)
+                                    </td>
+                                    <td valign="middle">
+                                        <br />
+
+                                        @{ 
+                                            string tag = "0";
+                                            if (Session["input-@item.ItemID"] != null)
+                                            {
+                                                tag = Session["input-@item.ItemID"].ToString();
+                                            }
+
+                                        }
+
+
+                                        <input id="input-@item.ItemID" name="input-@item.ItemID" type="number" min="0" max="99" value=@tag />
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                        <br />
+                    }
+                    
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="递交订单" class="btn btn-default" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+

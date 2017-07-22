@@ -1,0 +1,48 @@
+﻿@model WebApplication2.Models.User
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>删除用户</h2>
+
+<h3>您确定要删除吗?</h3>
+<div>
+    <h4>用户信息</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Password)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Password)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Roles)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Roles)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="删除" class="btn btn-danger" /> |
+            @Html.ActionLink("返回到用户列表", "Index")
+        </div>
+    }
+</div>

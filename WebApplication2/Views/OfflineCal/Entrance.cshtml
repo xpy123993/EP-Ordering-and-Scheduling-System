@@ -1,0 +1,54 @@
+﻿@model WebApplication2.Models.OfflineProblem
+@{
+    ViewBag.Title = "Entrance";
+}
+
+<h2>Entrance</h2>
+
+<div>
+    @using (Html.BeginForm())
+    {
+
+        <div class="form-group">
+            <dl>
+                <dt>
+                    骑士数量
+                </dt>
+                <dd>
+                    <input type="number" min="0" max="99" name="WorkerNum" class="form-control" />
+                    <br />
+                </dd>
+                
+                <dt>
+                    每个骑士最多派遣次数
+                </dt>
+                <dd>
+                    <input type="number" min="0" max="99" name="ScheduleMaxTime" class="form-control" />
+                    <br />
+                </dd>
+                <dt>
+                    调度开始时间
+                </dt>
+                <dd>
+                    <input type="datetime-local" name="StartTime" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddThh:mm")"/>
+                    <br />
+                </dd>
+                <dt>
+                    调度结束时间
+                </dt>
+                <dd>
+                    <input type="datetime-local" name="EndTime" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddThh:mm")"/>
+                    <br />
+                </dd>
+                <dt>
+                    订单完成时限(分钟)
+                </dt>
+                <dd>
+                    <input type="number" name="DueDate" class="form-control" min="0" max="9999"/>
+                    <br />
+                </dd>
+            </dl>
+        </div>
+        <input type="submit" class="btn btn-default" value="保存"/>
+    }
+</div>

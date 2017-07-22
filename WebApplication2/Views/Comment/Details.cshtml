@@ -1,0 +1,66 @@
+﻿@model WebApplication2.Models.ItemCommentModel
+@{
+    ViewBag.Title = "商品详情页";
+}
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="row clearfix">
+                <div class="col-md-2 column">
+                    <img alt="140x140" src="~/Image?path=@Model.menuItem.ID" width="140" height="140"/>
+                </div>
+                <div class="col-md-8 column">
+                    <h2>
+                        @Model.menuItem.Name
+                    </h2>
+                    <p>
+                        @Model.menuItem.Description
+                    </p>
+                </div>
+                <div class="col-md-2 column">
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th width="20%"></th>
+                        <th width="80%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+    @foreach (WebApplication2.Models.MenuComment menuComment in Model.menuComments)
+    {
+        if(menuComment.Text == null || menuComment.Text.Length == 0)
+        {
+            continue;
+        }
+        <tr>
+            <td>
+                @menuComment.Username
+            </td>
+            <td>
+                <font color="gray" size="2">评论日期: @menuComment.CommentDate.ToString("yyyy-MM-dd hh:mm:ss") <br /></font>
+                
+                @if (menuComment.Rating > 0)
+                {
+                    <div class="text-success">@menuComment.Text <br /></div>
+                }
+                else
+                {
+                    <div class="text-danger">@menuComment.Text <br /></div>
+                }
+            </td>
+        </tr>
+    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            @Html.ActionLink("返回", "Create", "Order")
+        </div>
+    </div>
+</div>

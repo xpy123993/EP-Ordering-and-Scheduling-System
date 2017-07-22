@@ -1,0 +1,163 @@
+﻿@model WebApplication2.Models.OrderModel
+
+@{
+    ViewBag.Title = "Details";
+}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<h2>Details</h2>
+<style type="text/css">
+    body, html, #allmap {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        font-family: "微软雅黑";    <!-- 这里我们用了微软雅黑字体 -->
+    }
+</style>
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-8 column">
+            <div>
+                <h4>MenuOrder</h4>
+
+
+                <dl class="dl-horizontal">
+                    <dt>用户名</dt>
+                    <dd>@Html.DisplayFor(model => model.menuOrder.Username)</dd>
+
+                    <dt>订单时间</dt>
+                    <dd>@Html.DisplayFor(model => model.menuOrder.OrderDate)</dd>
+
+                    <dt>当前状态</dt>
+                    <dd>@Html.DisplayFor(model => model.menuOrder.Status)</dd>
+
+                    <dt>总计</dt>
+                    <dd>@Html.DisplayFor(model => model.cost)</dd>
+                </dl>
+                <br />
+                <table class="table">
+                    <tr>
+                        <th>
+                            商品名称
+                        </th>
+                        <th>
+                            商品描述
+                        </th>
+                        <th>
+                            单价
+                        </th>
+                        <th>
+                            购买数量
+                        </th>
+                    </tr>
+                    @foreach (WebApplication2.Models.OrderItem orderItem in Model.orderItems)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => orderItem.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => orderItem.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => orderItem.Price)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => orderItem.ItemNumber)
+                            </td>
+                        </tr>
+                    }
+                </table>
+                <dl class="dl-horizontal"></dl>
+                
+                @using (Html.BeginForm())
+                {
+                    <dl class="form-group">
+                        <dt>添加备注：</dt>
+                        <dd>
+                            <textarea name="text" id="text" class="form-control" placeholder="请输入备注" style="min-width:80%" rows="5"></textarea>
+                        </dd>
+                        <dt>配送地址：</dt>
+                        <dd>
+                            
+                            <input type="text" name="address" id="address" class="form-control" placeholder="请输入地址"/>
+                            <input type="hidden" name="order_id" value="@Model.menuOrder.ID" />
+                            <input type="hidden" name="JD" id="JD" />
+                            <input type="hidden" name="WD" id="WD" />
+                        </dd>
+                    </dl>
+                    <button onclick="location=@Url.Action("DeleteUser",new{id=Model.menuOrder.ID})" class="btn btn-danger">删除</button>
+                    <input type="submit" class="btn btn-success" name="递交订单"/>
+                }
+            </div>
+            <p>
+                <br />
+                @Html.ActionLink("Back to List", "Index")
+            </p>
+
+        </div>
+        <div class="col-md-4 column">
+            
+            <div id="allmap" name="allmap" style="width:500px; height:500px"></div>
+
+            <script type="text/javascript">
+                function loadJScript() {
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "http://api.map.baidu.com/api?v=2.0&ak=xE6XPAnUbLXpI6vGd79EgfwrmnSaGxsj&callback=init";
+                    document.body.appendChild(script);
+                }
+                function init() {
+                    var map = new BMap.Map("allmap");
+                    var point = new BMap.Point(116.331398, 39.897445);
+                    var geoc = new BMap.Geocoder();
+                    map.centerAndZoom(point, 12);
+
+                    var geolocation = new BMap.Geolocation();
+                    geolocation.getCurrentPosition(function (r) {
+                        if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+                            var mk = new BMap.Marker(r.point);
+                            map.addOverlay(mk);
+                            map.panTo(r.point);
+
+
+                            $("#JD").val(r.point.lng);
+                            $("#WD").val(r.point.lat);
+
+                            
+                            geoc.getLocation(r.point, function (rs) {
+                                var addComp = rs.addressComponents;
+                                $("#address").val(addComp.city + ", " + addComp.district + ", " + addComp.street );
+
+                            });
+
+                        }
+                        else {
+                            alert('无法定位您的位置，请手动输入' + this.getStatus());
+                        }
+                    }, { enableHighAccuracy: true });
+
+                    map.addEventListener("click", function (e) {
+                        var pt = e.point;
+                        geoc.getLocation(pt, function (rs) {
+
+                            $("#JD").val(pt.lng);
+                            $("#WD").val(pt.lat);
+
+                            var addComp = rs.addressComponents;
+                            $("#address").val(addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber);
+                        });
+                    });
+                }
+                $(document).ready(function () {
+                    loadJScript();
+                });
+
+            </script>
+        </div>
+    </div>
+</div>
