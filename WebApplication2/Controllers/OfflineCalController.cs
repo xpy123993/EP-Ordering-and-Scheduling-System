@@ -27,13 +27,13 @@ namespace WebApplication2.Controllers
         [Display(Name = "结果编号")]
         public int ID { get; set; }
 
-        [Display(Name = "总拖延时长")]
+        [Display(Name = "总拖延时长(分钟)")]
         public double TotalLate { get; set; }
 
-        [Display(Name = "总长度")]
+        [Display(Name = "总长度(公里)")]
         public double TotalDistance { get; set; }
 
-        [Display(Name = "总时间")]
+        [Display(Name = "总时间(分钟)")]
         public double TotalDuration { get; set; }
 
         public List<CItem> Items { get; set; }
@@ -154,18 +154,25 @@ namespace WebApplication2.Controllers
             return JavaScript(js_str);
         }
 
-
-        [HttpPost]
         public ActionResult CalculateResult(int? id)
         {
-            List<CResult> history = getHistory();
-            if (id != null && 0 <= id && id < history.Count)
-                return View(history[(int)id]);  
-            return Content("No validable result");
-        }
+            if(id != null)
+            {
+ 
+                if (0 <= id && id < getHistory().Count)
+                {
+                    CResult currentModel = getHistory()[(int)id];
 
-        public ActionResult CalculateResult()
-        {
+                    Session["current_model"] = currentModel;
+
+
+                    return View(currentModel);
+
+
+                }
+            }
+
+
             if (Session["ScheduleDetails"] == null)
                 return RedirectToAction("Calculator");
 
@@ -258,6 +265,11 @@ namespace WebApplication2.Controllers
             List<MenuOrder> data = ProblemUtils.GetOrders((DateTime)Session["StartTime"], (DateTime)Session["EndTime"]);
             Session["cal_data"] = data;
             return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult ResultTable()
+        {
+            return View(getHistory());
         }
 
         public List<int> GetList(string str)

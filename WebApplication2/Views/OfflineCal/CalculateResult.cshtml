@@ -7,7 +7,10 @@
 
 <script src="~/Scripts/jquery-1.12.4.min.js"></script>
 <script src="http://api.map.baidu.com/api?v=2.0&ak=xE6XPAnUbLXpI6vGd79EgfwrmnSaGxsj"></script>
-<script src="RouteQuery" type="text/javascript"></script>
+<script src="~/OfflineCal/RouteQuery" type="text/javascript"></script>
+
+@Html.ActionLink("查看历史纪录", "ResultTable")
+<br />
 
 <script>
 
@@ -30,7 +33,7 @@
 
         update_routes();
         //向服务器发送获得订单请求，用于显示订单细节
-        jQuery.getJSON("GetOrderInfo", function (r_orderlist) {
+        jQuery.getJSON("/./OfflineCal/GetOrderInfo", function (r_orderlist) {
 
             init_map();
 
