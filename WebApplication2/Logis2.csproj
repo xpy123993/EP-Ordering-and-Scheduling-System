@@ -150,6 +150,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="CommentUtils.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AssignmentController.cs" />
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImageController.cs" />
@@ -174,6 +175,11 @@
     <Compile Include="Models\Worker.cs" />
     <Compile Include="OrderUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PSOKit\Evaluator.cs" />
+    <Compile Include="PSOKit\MathUtils.cs" />
+    <Compile Include="PSOKit\Optimizer.cs" />
+    <Compile Include="PSOKit\ProblemInstance.cs" />
+    <Compile Include="PSOKit\Translate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-responsive.css" />
@@ -302,6 +308,7 @@
     <Content Include="Views\OfflineCal\Calculator.cshtml" />
     <Content Include="Views\OfflineCal\CalculateResult.cshtml" />
     <Content Include="Views\OfflineCal\ResultTable.cshtml" />
+    <Content Include="Views\Assignment\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

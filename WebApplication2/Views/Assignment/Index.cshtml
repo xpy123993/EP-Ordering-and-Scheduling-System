@@ -1,0 +1,20 @@
+﻿@model PSOTSP.Solution
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Solution : @Model.tag</h2>
+
+
+@foreach (List<int> list in Model.job_ids)
+{
+    <label>Worker:</label>
+
+    foreach(int i in list)
+    {
+        <label>@i</label>
+    }
+    <br />
+}
+

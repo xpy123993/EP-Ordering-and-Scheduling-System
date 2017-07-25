@@ -26,6 +26,9 @@ namespace WebApplication2.Controllers
             if (User.IsInRole("admin"))
             {
                 List<MenuOrder> menuOrders = new List<MenuOrder>();
+
+                //角色为admin的用户只能浏览当天的外卖数据（并没有什么卵用）
+
                 foreach(MenuOrder menuOrder in db.MenuOrders)
                 {
                     if (DateTime.Now.Date == menuOrder.OrderDate.Date)
