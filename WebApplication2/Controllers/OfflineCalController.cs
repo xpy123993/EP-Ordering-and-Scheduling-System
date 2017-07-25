@@ -267,8 +267,53 @@ namespace WebApplication2.Controllers
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult ResultTable()
+
+
+        /*
+         * ResultTable
+         * 返回辅助计算的历史纪录，ID为排序方式
+         * 
+         * id:
+         * 0 - 根据结果总路程大小进行排序
+         * 1 - 根据结果总时间长短进行排序
+         * 2 - 根据结果总拖延时间长短进行排序
+         * null - 根据结果编号进行排序
+         * 
+         * */
+
+        public ActionResult ResultTable(int? id)
         {
+            List<CResult> results = getHistory();
+            if(id != null)
+            {
+                switch (id)
+                {
+                    case 0:
+                        results.Sort(delegate (CResult a, CResult b)
+                        {
+                            return a.TotalDistance.CompareTo(b.TotalDistance);
+                        });
+                        break;
+                    case 1:
+                        results.Sort(delegate (CResult a, CResult b)
+                        {
+                            return a.TotalDuration.CompareTo(b.TotalDuration);
+                        });
+                        break;
+                    case 2:
+                        results.Sort(delegate (CResult a, CResult b)
+                        {
+                            return a.TotalLate.CompareTo(b.TotalLate);
+                        });
+                        break;
+                    default:
+                        Console.WriteLine("ERR AURGUMENT IN RESULTTABLE REQUEST");
+                        break;
+                }
+                return View(results);
+            }
+
+
             return View(getHistory());
         }
 

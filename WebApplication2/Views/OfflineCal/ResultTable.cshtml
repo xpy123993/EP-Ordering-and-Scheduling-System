@@ -68,18 +68,20 @@
                 @Html.DisplayFor(modelItem => item.ID)
             </td>
             <td>
-                @(item.TotalLate / 60)
+                @((item.TotalLate / 60).ToString("#0.00"))
             </td>
             <td>
-                @(item.TotalDistance / 1000)
+                @((item.TotalDistance / 1000).ToString("#0.00"))
             </td>
             <td>
-                @(item.TotalDuration / 60)
+                @((item.TotalDuration / 60).ToString("#0.00"))
             </td>
             <td>
-                @Html.ActionLink("查看", "CalculateResult", new { id = item.ID }) |
+                @Html.ActionLink("查看", "CalculateResult", new { id = item.ID }) 
             </td>
         </tr>
     }
 
 </table>
+
+@Html.ActionLink("根据行驶路程排序", "ResultTable", new { id = 0 }) | @Html.ActionLink("根据总路程时间排序", "ResultTable", new { id = 1 }) | @Html.ActionLink("根据总拖延时间排序", "ResultTable", new { id = 2 })
