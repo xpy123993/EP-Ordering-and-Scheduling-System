@@ -1,20 +1,63 @@
-﻿@model PSOTSP.Solution
+﻿@model WebApplication2.Controllers.OutputSolution
 
 @{
+    
     ViewBag.Title = "Index";
 }
 
-<h2>Solution : @Model.tag</h2>
+<h2>Solution : @Model.solution.tag</h2>
 
-
-@foreach (List<int> list in Model.job_ids)
-{
-    <label>Worker:</label>
-
-    foreach(int i in list)
-    {
-        <label>@i</label>
-    }
-    <br />
+<style>
+table.fixed {
+    table-layout: fixed;
 }
+table.fixed td {
+    overflow-y: hidden;
+}
+</style>
 
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+
+
+<table class="table">
+
+    <tr>
+        @foreach(WebApplication2.Models.Worker worker in Model.workers)
+        {
+            <th>
+                @worker.Name
+            </th>
+        }
+
+    </tr>
+
+    
+        @{
+            bool next = true;
+            int ptr = 0;
+            while (next)
+            {
+                next = false;
+                <tr>
+                    @{
+                        for (int i = 0; i < Model.workers.Count(); i++)
+                        {
+                            if (Model.solution.job_ids[i].Count() >= ptr)
+                            {
+                                <td>@Model.menuOrders.ToList()[ptr].Address</td>
+                                next = true;
+                            }
+                            else
+                            {
+                                <td> - </td>
+                            }
+
+                        }
+                    }
+                </tr>
+                ptr++;
+            }
+        }
+   
+
+</table>

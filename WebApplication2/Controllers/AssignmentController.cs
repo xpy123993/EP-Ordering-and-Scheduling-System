@@ -9,6 +9,14 @@ using WebApplication2.PSOKit;
 
 namespace WebApplication2.Controllers
 {
+    public class OutputSolution
+    {
+        public IEnumerable<Worker> workers;
+        public IEnumerable<MenuOrder> menuOrders;
+        public Solution solution;
+    }
+
+
     public class AssignmentController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -41,7 +49,14 @@ namespace WebApplication2.Controllers
 
             Solution solution = Translate.Solve(menuOrders, workers);
 
-            return View(solution);
+            OutputSolution data = new OutputSolution()
+            {
+                workers = workers,
+                menuOrders = menuOrders,
+                solution = solution
+            };
+
+            return View(data);
         }
     }
 }
