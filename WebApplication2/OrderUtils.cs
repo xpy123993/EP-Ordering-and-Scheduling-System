@@ -117,6 +117,9 @@ namespace WebApplication2
                     count++;
                 }
             }
+
+            if (rating < 0) rating = 0;
+
             return rating;
         }
 

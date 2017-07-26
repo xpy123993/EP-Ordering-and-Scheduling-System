@@ -49,6 +49,11 @@ namespace WebApplication2.Controllers
             IQueryable<MenuOrder> menuOrders = GetUnassignedMenuOrders();
             IQueryable<Worker> workers = GetUnassignedWorkers();
 
+            if (menuOrders.Count() == 0)
+                return Content("无待分配订单");
+            if (workers.Count() == 0)
+                return Content("无可用人员");
+
             Solution solution = Translate.Solve(menuOrders, workers);
 
             OutputSolution data = new OutputSolution()
@@ -57,10 +62,7 @@ namespace WebApplication2.Controllers
                 menuOrders = menuOrders,
                 solution = solution
             };
-            if (menuOrders.Count() == 0)
-                return Content("无待分配订单");
-            if (workers.Count() == 0)
-                return Content("无可用人员");
+            
             return View(data);
         }
 
