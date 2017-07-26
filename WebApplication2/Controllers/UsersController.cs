@@ -16,7 +16,7 @@ namespace WebApplication2.Controllers
     [Authorize(Roles = "superadmin")]
     public class UsersController : Controller
     {
-        private UserContext db = new UserContext();
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Users
         public ActionResult Index()

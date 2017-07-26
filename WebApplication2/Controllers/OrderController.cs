@@ -80,8 +80,8 @@ namespace WebApplication2.Controllers
             MenuOrder menuOrder = db.MenuOrders.Find(id);
 
             menuOrder.Address = Request["address"] == null ? "" : Request["address"];
-            menuOrder.JD = decimal.Parse(Request["JD"]);
-            menuOrder.WD = decimal.Parse(Request["WD"]);
+            menuOrder.JD = double.Parse(Request["JD"]);
+            menuOrder.WD = double.Parse(Request["WD"]);
             menuOrder.Text = Request["text"] == null ? "" : Request["text"];
             db.Entry(menuOrder).State = EntityState.Modified;
             db.SaveChanges();

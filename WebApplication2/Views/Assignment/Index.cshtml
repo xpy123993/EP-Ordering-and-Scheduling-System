@@ -5,7 +5,7 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Solution : @Model.solution.tag</h2>
+<h2>在线调度分配界面</h2>
 
 <style>
 table.fixed {
@@ -16,48 +16,172 @@ table.fixed td {
 }
 </style>
 
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
 <script src="~/Scripts/jquery-1.12.4.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<script src="~/Scripts/jquery.dragsort-0.5.2.min.js"></script>
 
+<script src="http://api.map.baidu.com/api?v=2.0&ak=xE6XPAnUbLXpI6vGd79EgfwrmnSaGxsj"></script>
 
-<table class="table">
+<div id="allmap"></div>
+<!--allmap:hidden map for query-->
+
+<script>
+
+    $(document).ready(function () {
+        map = new BMap.Map("allmap");
+        init_points();
+    });
+
+</script>
+
+<table class="table fixed">
 
     <tr>
+        @{ 
+            int worker_id = 0;
+        }
         @foreach(WebApplication2.Models.Worker worker in Model.workers)
         {
             <th>
                 @worker.Name
+                <div id="label_@worker_id">
+
+                </div>
             </th>
+            worker_id++;
         }
 
     </tr>
-
-    
-        @{
-            bool next = true;
+    <tr>
+        @{ 
             int ptr = 0;
-            while (next)
-            {
-                next = false;
-                <tr>
-                    @{
-                        for (int i = 0; i < Model.workers.Count(); i++)
-                        {
-                            if (Model.solution.job_ids[i].Count() >= ptr)
-                            {
-                                <td>@Model.menuOrders.ToList()[ptr].Address</td>
-                                next = true;
-                            }
-                            else
-                            {
-                                <td> - </td>
-                            }
-
-                        }
-                    }
-                </tr>
-                ptr++;
-            }
         }
-   
+        @foreach (WebApplication2.Models.Worker worker in Model.workers)
+        {
+            <td>
+                <div class="dragsort" id="worker_@ptr">
+                    
+                    @for(int i = 0; i < Model.solution.job_ids[ptr].Count(); i++)
+                    {
+                        int current_order_id = Model.solution.job_ids[ptr][i];
+
+                        <div id="ORDER-@Model.solution.job_ids[ptr][i]" class="list-group-item">
+                            <text class="text-info">订单编号-@Model.menuOrders.ToList()[current_order_id].ID</text><br />
+                            <small>送货地址：@Model.menuOrders.ToList()[current_order_id].Address</small><br />
+                            <small>订单时间：@Model.menuOrders.ToList()[current_order_id].OrderDate.ToString("hh:mm:ss")</small>
+                        </div>
+                    }
+
+
+                </div>
+            </td>
+            ptr++;
+        }
+    </tr>
 
 </table>
+
+
+<div class="form-group">
+
+    @using (Html.BeginForm())
+    {
+        for(int i = 0; i < Model.workers.Count(); i ++)
+        {
+            <input type="hidden" name="i_worker_@i" id="i_worker_@i" value="0"/>
+        }
+
+        @:<input type="submit" class="btn btn-success" value="派遣"/>
+    }
+
+    
+</div>
+
+<script>
+    $(".dragsort").dragsort({
+        dragSelector: "div",
+        dragBetween: true,
+        dragEnd: after_drag,
+        placeHolderTemplate: "<li class='placeHolder'><div></div></li>",
+        scrollSpeed: 5
+    });
+
+    var ptns = new Array();
+    var diss = new Array();
+
+    var distances = new Array();
+    var durations = new Array();
+
+    var map;
+
+    function search_route(start_point, end_point, i, j) {
+        var searchComplete = function (results) {
+            if (transit.getStatus() != BMAP_STATUS_SUCCESS) {
+                return;
+            }
+            var plan = results.getPlan(0);
+            distances[i + "_" + j] = plan.getDistance(false);//m    获得任意两个点的距离
+            durations[i + "_" + j] = plan.getDuration(false);//s
+            distances[j + "_" + i] = plan.getDistance(false);//m
+            durations[j + "_" + i] = plan.getDuration(false);//s
+            after_drag();
+        }
+        var transit = new BMap.DrivingRoute(map, {
+            renderOptions: { map: map },
+            onSearchComplete: searchComplete,
+            onPolylinesSet: function () {
+                setTimeout(function () { }, "1000");
+            }
+        });
+        transit.search(start_point, end_point);
+    }
+
+
+    function init_points() {
+
+        ptns = new Array();
+
+        @for(int i = 0; i < Model.menuOrders.Count(); i++)
+        {
+            var menuOrder = Model.menuOrders.ToList()[i];
+            @:ptns.push(new BMap.Point(@menuOrder.JD.ToString("#0.000000"), @menuOrder.WD.ToString("#0.000000")));
+            @:distances[@i + "_" + @i] = durations[@i + "_" + @i] = 0;
+        }
+        @for(int i = 0; i < Model.menuOrders.Count(); i++)
+        {
+            for(int j = 0; j < i; j++)
+            {
+                @:search_route(ptns[@i], ptns[@j], @i, @j);
+            }
+        }
+    }
+
+    function after_drag() {
+
+        for (var i = 0; i < @Model.workers.Count(); i++) {
+            var routes = $("#worker_" + i + " div").map(function(){
+                return $(this).prop("id").substr(6);
+            }).get();
+
+            var sum = 0;
+            for (var j = 1; j < routes.length; j++) {
+                sum += durations[routes[j - 1] + "_" + routes[j]];
+            }
+
+            if (routes.length > 0) {
+                $("#label_" + i).html("<small>预估时间：" + (sum / 60 + 10).toPrecision(3) + "（分钟）</small>");
+                $("#i_worker_" + i).val(600 + sum);
+            }
+            else {
+                $("#label_" + i).html("<small>下一轮闲置</small>");
+                $("#i_worker_" + i).val(0);
+            }
+        }
+
+        return true;
+    }
+
+
+</script>

@@ -306,6 +306,37 @@ namespace WebApplication2.Controllers
                             return a.TotalLate.CompareTo(b.TotalLate);
                         });
                         break;
+                    case 3:
+                        results.Sort(delegate (CResult a, CResult b)
+                        {
+                            return -a.TotalDistance.CompareTo(b.TotalDistance);
+                        });
+                        break;
+                    case 4:
+                        results.Sort(delegate (CResult a, CResult b)
+                        {
+                            return -a.TotalDuration.CompareTo(b.TotalDuration);
+                        });
+                        break;
+                    case 5:
+                        results.Sort(delegate (CResult a, CResult b)
+                        {
+                            return -a.TotalLate.CompareTo(b.TotalLate);
+                        });
+                        break;
+                    case 6:
+                        results.Sort(delegate (CResult a, CResult b)
+                        {
+                            return a.ID.CompareTo(b.ID);
+                        });
+                        break;
+                    case 7:
+                        results.Sort(delegate (CResult a, CResult b)
+                        {
+                            return -a.ID.CompareTo(b.ID);
+                        });
+                        break;
+
                     default:
                         Console.WriteLine("ERR AURGUMENT IN RESULTTABLE REQUEST");
                         break;

@@ -10,7 +10,6 @@ namespace WebApplication2.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-            ContextKey = "WebApplication2.Models.ApplicationDbContext";
         }
 
         protected override void Seed(WebApplication2.Models.ApplicationDbContext context)

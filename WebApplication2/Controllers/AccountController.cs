@@ -12,7 +12,7 @@ namespace WebApplication2.Controllers
     public class AccountController : Controller
     {
         //这个是数据库，repository你可以理解为一张数据表
-        private UserContext repository = new UserContext();
+        private ApplicationDbContext repository = new ApplicationDbContext();
 
         public ActionResult Login()
         {

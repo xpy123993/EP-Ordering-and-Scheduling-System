@@ -28,18 +28,12 @@ namespace WebApplication2.Models
 
     public class Position
     {
-        public decimal JD, WD;
+        public double JD, WD;
         public string Address;
-        public Position(decimal JD, decimal WD, string Address)
+        public Position(double JD, double WD, string Address)
         {
             this.JD = JD;
             this.WD = WD;
-            this.Address = Address;
-        }
-        public Position(double JD, double WD, string Address)
-        {
-            this.JD = Convert.ToDecimal(JD);
-            this.WD = Convert.ToDecimal(WD);
             this.Address = Address;
         }
     }
@@ -140,13 +134,13 @@ namespace WebApplication2.Models
 
 
             //121.82333,39.088169
-            decimal min_jd = 121.82333M - 0.05M;
-            decimal max_jd = 121.82333M + 0.05M;
+            double min_jd = 121.82333 - 0.05;
+            double max_jd = 121.82333 + 0.05;
 
-            decimal min_wd = 39.088169M - 0.02M;
-            decimal max_wd = 39.088169M + 0.02M;
+            double min_wd = 39.088169 - 0.02;
+            double max_wd = 39.088169 + 0.02;
 
-            decimal jd, wd;
+            double jd, wd;
 
             List<MenuOrder> menuOrders = new List<MenuOrder>();
 
@@ -156,8 +150,8 @@ namespace WebApplication2.Models
 
             for (int i = 0; i < 5; i++)
             {
-                jd = Convert.ToDecimal(random.NextDouble()) * (max_jd - min_jd) + min_jd;
-                wd = Convert.ToDecimal(random.NextDouble()) * (max_wd - min_wd) + min_wd;
+                jd = (random.NextDouble()) * (max_jd - min_jd) + min_jd;
+                wd = (random.NextDouble()) * (max_wd - min_wd) + min_wd;
 
                 MenuOrder menuOrder = new MenuOrder()
                 {
@@ -179,8 +173,8 @@ namespace WebApplication2.Models
             current_time = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd ") + "11:00");
             for (int i = 0; i < 5; i++)
             {
-                jd = Convert.ToDecimal(random.NextDouble()) * (max_jd - min_jd) + min_jd;
-                wd = Convert.ToDecimal(random.NextDouble()) * (max_wd - min_wd) + min_wd;
+                jd = (random.NextDouble()) * (max_jd - min_jd) + min_jd;
+                wd = (random.NextDouble()) * (max_wd - min_wd) + min_wd;
 
                 MenuOrder menuOrder = new MenuOrder()
                 {

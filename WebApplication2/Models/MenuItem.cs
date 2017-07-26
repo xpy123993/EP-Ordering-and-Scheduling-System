@@ -44,8 +44,8 @@ namespace WebApplication2.Models
         [Display(Name = "订购地址")]
         public string Address { get; set; }
         
-        public decimal JD { get; set; }
-        public decimal WD { get; set; }
+        public double JD { get; set; }
+        public double WD { get; set; }
     }
 
     

@@ -17,7 +17,7 @@ namespace WebApplication2.Controllers
         {
 
             string path = Request.QueryString["path"];
-            var filePath = Server.MapPath(string.Format("~/{0}", path + ".png"));
+            var filePath = Server.MapPath(string.Format("~/MenuImage/{0}", path + ".png"));
 
             if (path == null || path.Length == 0 || !System.IO.File.Exists(filePath))
             {
@@ -30,7 +30,7 @@ namespace WebApplication2.Controllers
                 bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
                 g.Dispose();
                 bmp.Dispose();
-                return File(ms.ToArray(), "image/jpeg");
+                return File(ms.ToArray(), "image/png");
             }
                 
             
@@ -50,7 +50,7 @@ namespace WebApplication2.Controllers
             if (filename == null || filename.Length == 0)
                 filename = "default";
             
-            var filePath = Server.MapPath(string.Format("~/{0}", filename + ".png"));
+            var filePath = Server.MapPath(string.Format("~/MenuImage/{0}", filename + ".png"));
             file.SaveAs(filePath);
             return View();
         }

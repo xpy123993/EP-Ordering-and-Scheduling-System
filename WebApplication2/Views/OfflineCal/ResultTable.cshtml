@@ -10,6 +10,8 @@
 
 <h2>ResultTable</h2>
 
+升序 @Html.ActionLink("根据结果编号排序", "ResultTable", new { id = 6 }) | @Html.ActionLink("根据行驶路程排序", "ResultTable", new { id = 0 }) | @Html.ActionLink("根据总路程时间排序", "ResultTable", new { id = 1 }) | @Html.ActionLink("根据总拖延时间排序", "ResultTable", new { id = 2 }) <br />
+降序 @Html.ActionLink("根据结果编号排序", "ResultTable", new { id = 7 }) | @Html.ActionLink("根据总路程时间排序", "ResultTable", new { id = 4 }) | @Html.ActionLink("根据总拖延时间排序", "ResultTable", new { id = 5 }) <br />
 <table class="table" id="table"></table>
 <script>
     $(document).ready(function () {
@@ -84,4 +86,3 @@
 
 </table>
 
-@Html.ActionLink("根据行驶路程排序", "ResultTable", new { id = 0 }) | @Html.ActionLink("根据总路程时间排序", "ResultTable", new { id = 1 }) | @Html.ActionLink("根据总拖延时间排序", "ResultTable", new { id = 2 })

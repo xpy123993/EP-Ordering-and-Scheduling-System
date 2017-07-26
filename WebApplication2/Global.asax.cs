@@ -32,7 +32,7 @@ namespace WebApplication2
             IIdentity id = Context.User.Identity;
             if (id.IsAuthenticated)
             {
-                var roles = new UserContext().GetRoles(id.Name);
+                var roles = new ApplicationDbContext().GetRoles(id.Name);
 
                 List<string> roles_d = new List<string>(roles.Split(','));
                 roles_d.Add(roles);
