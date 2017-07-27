@@ -104,9 +104,15 @@ namespace WebApplication2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,Username,OrderList,OrderDate,Status")] MenuOrder menuOrder)
         {
+
+            //管理员只能修改用户订单的完成状态
+
             if (ModelState.IsValid)
             {
-                db.Entry(menuOrder).State = EntityState.Modified;
+                MenuOrder o_menuOrder = db.MenuOrders.Find(menuOrder.ID);
+                o_menuOrder.Status = menuOrder.Status;
+
+                db.Entry(o_menuOrder).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

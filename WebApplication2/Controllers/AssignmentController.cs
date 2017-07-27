@@ -74,6 +74,9 @@ namespace WebApplication2.Controllers
             IQueryable<Worker> workers = GetUnassignedWorkers();
             IQueryable<MenuOrder> menuOrders = GetUnassignedMenuOrders();
 
+            if (workers.Count() == 0) return Content("无闲置骑士");
+            if (menuOrders.Count() == 0) return Content("无待分配订单");
+
             //修改工作人员下次可用时间，增加调度次数
             for(int i = 0; i < workers.Count(); i++)
             {

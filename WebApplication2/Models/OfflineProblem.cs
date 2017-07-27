@@ -204,7 +204,7 @@ namespace WebApplication2.Models
             List<MenuOrder> retOrders = new List<MenuOrder>();
             foreach(MenuOrder menuOrder in menuOrders)
             {
-                if(startTime.CompareTo(menuOrder.OrderDate) <= 0 && endTime.CompareTo(menuOrder.OrderDate) >= 0)
+                if(DateTime.Compare(startTime, menuOrder.OrderDate) <= 0 && DateTime.Compare(endTime, menuOrder.OrderDate) >= 0)
                 {
                     retOrders.Add(menuOrder);
                 }

@@ -154,6 +154,16 @@ namespace WebApplication2.Controllers
             return JavaScript(js_str);
         }
 
+        public CResult GetHistoryModel(int id)
+        {
+            List<CResult> results = getHistory();
+            foreach(CResult result in results)
+            {
+                if (result.ID == id) return result;
+            }
+            return new CResult();
+        }
+
         public ActionResult CalculateResult(int? id)
         {
             if(id != null)
@@ -161,12 +171,8 @@ namespace WebApplication2.Controllers
  
                 if (0 <= id && id < getHistory().Count)
                 {
-                    CResult currentModel = getHistory()[(int)id];
-
-                    Session["current_model"] = currentModel;
-
-
-                    return View(currentModel);
+                    
+                    return View(GetHistoryModel((int)id));
 
 
                 }
